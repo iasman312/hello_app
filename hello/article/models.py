@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import MinLengthValidator
 from django.conf import settings
@@ -32,6 +33,10 @@ class Article(BaseModel):
         related_name='articles',
         db_table='article_tags'
     )
+    likes = models.ManyToManyField(User, related_name='blog_acticles', db_table='article_likes')
+
+    def total_likes(self):
+        return self.likes.count()
 
     class Meta:
         db_table = 'articles'

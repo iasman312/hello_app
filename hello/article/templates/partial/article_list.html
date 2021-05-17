@@ -19,6 +19,11 @@
             <a href="{% url 'accounts:user-detail' article.author_id %}">{{ article.author }}</a>
             | {{ article.created_at|date:"d.m.Y H:i:s" }}
         </p>
+        <hr>
+{#        <form action="{% url 'like_article'%}" method="POST">#}
+{#            {% csrf_token %}#}
+{#            <button type="submit", name="article_id", value="{{article.id}}", class="btn btn-primary btn-sm">Like</button>#}
+{#        </form>#}
     </div>
 
 {% empty %}

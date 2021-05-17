@@ -25,6 +25,11 @@
     <p>Author: {{ article.author }}</p>
     <p>Content: {{ article.content }}</p>
     <p>Tags: {% for tag in article.tags.all %}{{ tag.tag }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+    <hr>
+    <form action="{% url 'article:like_article' article.pk %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" name="article_id" value="{{article.id}}" class="btn btn-primary btn-sm">Like</button> - {{ total_likes }} Likes
+    </form>
 
     <h2>Comments:</h2>
     {% for comment in article.comments.all %}

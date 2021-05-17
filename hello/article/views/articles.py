@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import (
     ListView,
     CreateView,
@@ -14,6 +14,13 @@ from django.utils.http import urlencode
 
 from article.models import Article
 from article.forms import ArticleForm, SearchForm
+from django.http import HttpResponseRedirect
+
+
+def LikeView(request, pk):
+    post = get_object_or_404(Article, id=request.POST.get('article_id'))
+    post.likes.add(request.user)
+    return HttpResponseRedirect(reverse('article:view', args=[str(pk)]))
 
 
 class IndexView(ListView):
@@ -64,6 +71,13 @@ class IndexView(ListView):
 class ArticleView(DetailView):
     model = Article
     template_name = 'articles/view.html'
+
+    def get_context_data(self, *args, **kwargs):
+        stuff = get_object_or_404(Article, id=self.kwargs['pk'])
+        total_likes = stuff.total_likes()
+        context = super(ArticleView, self).get_context_data()
+        context["total_article_likes"] = total_likes
+        return context
 
 
 class CreateArticleView(PermissionRequiredMixin, CreateView):
