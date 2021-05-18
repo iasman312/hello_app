@@ -33,7 +33,7 @@
             {% else %}
                 <button id="like_article" type="submit" name="article_id" value="{{article.id}}" onclick="onClickArticle(event)" class="btn btn-primary btn-sm">Like</button>
             {% endif %}
-             - <span id="like_article_total">{{ article.total_article_likes }}</span> Likes
+             - <span class="like_article_total">{{ article.total_article_likes }}</span> Likes
         </form>
     {% endif %}
 
