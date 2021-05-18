@@ -19,18 +19,24 @@
             <a href="{% url 'accounts:user-detail' article.author_id %}">{{ article.author }}</a>
             | {{ article.created_at|date:"d.m.Y H:i:s" }}
         </p>
-        <hr>
-{#        <form action="{% url 'like_article'%}" method="POST">#}
-{#            {% csrf_token %}#}
-{#            <button type="submit", name="article_id", value="{{article.id}}", class="btn btn-primary btn-sm">Like</button>#}
-{#        </form>#}
+        {% if user.is_authenticated %}
+            <form action="{% url 'article:like_article' article.pk %}" method="POST">
+                {% csrf_token %}
+                {% if user in article.likes.all %}
+                    <button id="like_article" type="submit" name="article_id" value="{{article.id}}" onclick="onClickArticle(event)" class="btn btn-danger btn-sm">Unlike</button>
+                {% else %}
+                    <button id="like_article" type="submit" name="article_id" value="{{article.id}}" onclick="onClickArticle(event)" class="btn btn-primary btn-sm">Like</button>
+                {% endif %}
+                 - <span class="like_article_total">{{ article.total_article_likes }}</span> Likes
+            </form>
+        {% endif %}
     </div>
 
 {% empty %}
     <h2 class="text-center">Нет статей</h2>
 {% endfor %}
 
-
 {% if is_paginated %}
      {% include 'partial/pagination.html' %}
 {% endif %}
+

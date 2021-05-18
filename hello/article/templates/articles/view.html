@@ -25,16 +25,35 @@
     <p>Author: {{ article.author }}</p>
     <p>Content: {{ article.content }}</p>
     <p>Tags: {% for tag in article.tags.all %}{{ tag.tag }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-    <hr>
-    <form action="{% url 'article:like_article' article.pk %}" method="POST">
-        {% csrf_token %}
-        <button type="submit" name="article_id" value="{{article.id}}" class="btn btn-primary btn-sm">Like</button> - {{ total_likes }} Likes
-    </form>
+    {% if user.is_authenticated %}
+        <form action="{% url 'article:like_article' article.pk %}" method="POST">
+            {% csrf_token %}
+            {% if user in article.likes.all %}
+                <button id="like_article" type="submit" name="article_id" value="{{article.id}}" onclick="onClickArticle(event)" class="btn btn-danger btn-sm">Unlike</button>
+            {% else %}
+                <button id="like_article" type="submit" name="article_id" value="{{article.id}}" onclick="onClickArticle(event)" class="btn btn-primary btn-sm">Like</button>
+            {% endif %}
+             - <span id="like_article_total">{{ article.total_article_likes }}</span> Likes
+        </form>
+    {% endif %}
 
     <h2>Comments:</h2>
     {% for comment in article.comments.all %}
         <p>{{ comment.author }}: {{ comment.comment }}</p>
+        {% if user.is_authenticated %}
+            <form action="{% url 'article:like_comment' comment.pk %}" method="POST">
+                {% csrf_token %}
+                {% if user in comment.likes.all %}
+                    <button id="like_comment" type="submit" name="comment_id" value="{{comment.id}}" onclick="onClickComment(event)" class="btn btn-danger btn-sm">Unlike</button>
+                {% else %}
+                    <button id="like_comment" type="submit" name="comment_id" value="{{comment.id}}" onclick="onClickComment(event)" class="btn btn-primary btn-sm">Like</button>
+                {% endif %}
+                - <span id="like_comment_total">{{ comment.total_comment_likes }}</span> Likes
+            </form>
+        {% endif %}
     {% empty %}
         <p>Нет комментариев :(</p>
     {% endfor %}
 {% endblock content %}
+
+

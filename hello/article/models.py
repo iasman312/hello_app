@@ -35,7 +35,7 @@ class Article(BaseModel):
     )
     likes = models.ManyToManyField(User, related_name='blog_acticles', db_table='article_likes')
 
-    def total_likes(self):
+    def total_article_likes(self):
         return self.likes.count()
 
     class Meta:
@@ -66,6 +66,10 @@ class Comment(BaseModel):
         null=True,
         related_name='comments'
     )
+    likes = models.ManyToManyField(User, related_name='blog_comments', db_table='comment_likes')
+
+    def total_comment_likes(self):
+        return self.likes.count()
 
     class Meta:
         db_table = 'comments'

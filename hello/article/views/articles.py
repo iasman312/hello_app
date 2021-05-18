@@ -11,16 +11,31 @@ from django.views.generic import (
 from django.urls import reverse, reverse_lazy
 from django.db.models import Q
 from django.utils.http import urlencode
+from django.views.generic.base import View
 
-from article.models import Article
+from article.models import Article, Comment
 from article.forms import ArticleForm, SearchForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 
 
-def LikeView(request, pk):
-    post = get_object_or_404(Article, id=request.POST.get('article_id'))
-    post.likes.add(request.user)
-    return HttpResponseRedirect(reverse('article:view', args=[str(pk)]))
+class LikeView(View):
+    def get(self, request, *args, **kwargs):
+        post = get_object_or_404(Article, id=kwargs.get('pk'))
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+        return HttpResponse(post.likes.count())
+
+
+class LikeCommentView(View):
+    def get(self, request, *args, **kwargs):
+        post = get_object_or_404(Comment, id=kwargs.get('pk'))
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+        return HttpResponse(post.likes.count())
 
 
 class IndexView(ListView):
@@ -71,13 +86,6 @@ class IndexView(ListView):
 class ArticleView(DetailView):
     model = Article
     template_name = 'articles/view.html'
-
-    def get_context_data(self, *args, **kwargs):
-        stuff = get_object_or_404(Article, id=self.kwargs['pk'])
-        total_likes = stuff.total_likes()
-        context = super(ArticleView, self).get_context_data()
-        context["total_article_likes"] = total_likes
-        return context
 
 
 class CreateArticleView(PermissionRequiredMixin, CreateView):
