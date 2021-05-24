@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
 
     # Lib apps
+    'rest_framework',
 ]
 
 
