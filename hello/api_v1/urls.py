@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from api_v1.views import ArticleView
+from api_v1.views import ArticleView, ArticleDetailView
 
 
 app_name = 'api_v1'
@@ -8,6 +8,7 @@ app_name = 'api_v1'
 
 article_urls = [
     path('', ArticleView.as_view(), name='articles'),
+    path('<int:pk>/', ArticleDetailView.as_view(), name='article')
 ]
 
 

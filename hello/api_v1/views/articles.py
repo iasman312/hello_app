@@ -20,3 +20,24 @@ class ArticleView(APIView):
         serializer.is_valid(raise_exception=True)
         article = serializer.save()
         return Response({'id': article.id})
+
+
+class ArticleDetailView(APIView):
+    def get(self, request, pk, *args, **kwargs):
+        article = Article.objects.get(pk=pk)
+        response_data = ArticleSerializer(article, many=False).data
+
+        return Response(data=response_data)
+
+    def put(self, request, pk, *args, **kwargs):
+        article = Article.objects.get(pk=pk)
+        article_data = request.data
+        serializer = ArticleSerializer(instance=article, data=article_data)
+        serializer.is_valid(raise_exception=True)
+        updated_article = serializer.save()
+        return Response({'id': updated_article.id})
+
+    def delete(self, request, pk, *args, **kwargs):
+        article = Article.objects.get(pk=pk)
+        article.delete()
+        return Response({'success': 'Successfully deleted'})

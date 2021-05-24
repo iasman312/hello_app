@@ -1,1 +1,1 @@
-from api_v1.views.articles import ArticleView
+from api_v1.views.articles import ArticleView, ArticleDetailView
